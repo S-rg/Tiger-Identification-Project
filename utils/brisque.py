@@ -197,13 +197,7 @@ def test_measure_BRISQUE(imgPath, is_img = False, model_path = "allmodel"):
     return qualityscore
 
 # exit if input argument not given
-if(len(sys.argv) != 2):
-    print("Please give input argument of the image path.")
-    print("Arguments expected: <image_path>")
-    print("--------------------------------")
-    print("Exiting")
-    sys.exit(0)
 
 if __name__ == "__main__":
     qualityscore = test_measure_BRISQUE(sys.argv[1])
-    print ("Score of the given image: {}".format(qualityscore)) 
+    print ("Score of the given image: {}".format(qualityscore))
