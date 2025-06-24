@@ -31,4 +31,16 @@ if __name__ == '__main__':
     cropped_images = [Image.fromarray(img) for img in cropped_images]
     augmented_images = augment_images(cropped_images, 5)
 
-    plot_images(augmented_images, cols = 4)
+    #plot_images(augmented_images, cols = 4)
+
+    denoised_images = denoise_images(augmented_images)
+    # plot_images(denoised_images, cols = 4)
+
+    canny_images = [cv.Canny(np.array(img), 150, 250) for img in denoised_images]
+    # plot_images(canny_images, cols = 4, cmap='gray')
+
+    results_folder = os.path.join(root, 'stripe_extraction', 'results')
+    os.makedirs(results_folder, exist_ok=True)
+    for i, img in enumerate(canny_images):
+        img_path = os.path.join(results_folder, f'stripe_{i}.png')
+        cv.imwrite(img_path, img)
