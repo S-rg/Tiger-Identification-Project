@@ -6,8 +6,13 @@
 
 @keyframes pop-in {
      0% { opacity: 0.8; transform: scale(0.9); }
-     80% { opacity: 0.9; transform: scale(1.02); }
+     80% { opacity: 1; transform: scale(1.02); }
      100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pop-in-from-start {
+    0% { opacity: 0; transform: translateY(-20px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fade-out {
@@ -465,6 +470,7 @@ input[type="file"]:focus {
 }
 
 .comparison-content {
+    animation: pop-in 0.8s;
     background: white;
     padding: 30px;
     border-radius: 20px;
@@ -536,6 +542,11 @@ input[type="file"]:focus {
     border-radius: 15px;
     box-shadow: 0 8px 25px rgba(0,0,0,0.2);
     border: 3px solid;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.comparison-image-container img:hover {
+    transform: scale(1.08);
 }
 
 .comparison-image-container.uploaded img {
@@ -722,8 +733,8 @@ input[type="file"]:focus {
 
 .toastbar {
     position: fixed;
-    top: 100px;
-    right: -5%;
+    top: 140px;
+    right: -180px;
     transform: translateX(-50%);
     z-index: 2000;
     width: 400px;
@@ -738,6 +749,7 @@ input[type="file"]:focus {
     opacity: 0.8;
     transition: transform 0.3s ease;
     animation: pop-in 0.3s;
+    margin-bottom: 10px;
 }
 
 .toast.success {

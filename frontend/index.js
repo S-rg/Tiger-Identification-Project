@@ -5,6 +5,8 @@ const uploadSection = document.getElementById('uploadSection');
 const fileInput = document.getElementById('imageUpload');
 const host = window.location.hostname;
 
+var session_report = [];
+
 uploadSection.addEventListener('dragover', (e) => {
     e.preventDefault();
     uploadSection.classList.add('dragover');
@@ -38,6 +40,8 @@ function handleFileSelect(file) {
             updateIdentifyButton();
         };
         reader.readAsDataURL(file);
+
+        showToast('Image uploaded successfully!', 'success');
     }
 }
 
@@ -78,7 +82,7 @@ function showStatus(message, type = 'success') {
     }, 4000);
 }
 
-function showToast(message, type, duration = 3000) {
+function showToast(message, type, duration = 6000) {
     const container = document.getElementById('toastbar');
     
     const toast = document.createElement('div');
@@ -137,8 +141,7 @@ function hideLoadingModal() {
 }
 
 async function loadDatabase() {
-    showStatus('🔄 Loading tiger database using computer vision...', 'success');
-    showToast('Loading tiger database', 'success', 3000);
+    showToast('Loading tiger database', 'success', 6000);
     document.getElementById('loadDbBtn').disabled = true;
     
     try {
@@ -153,27 +156,23 @@ async function loadDatabase() {
         
         if (result.success) {
             databaseLoaded = true;
-            showStatus('✅ Tiger database loaded successfully using SIFT feature extraction', 'success');
-            showToast('Tiger database loaded successfully!', 'success');
+            showToast('Tiger database loaded successfully!', 'success', 6000);
             document.getElementById('loadDbBtn').innerHTML = '✅ Database Loaded';
             document.getElementById('loadDbBtn').className = 'btn btn-success';
             updateIdentifyButton();
         } else {
-            showStatus(`❌ Error: ${result.error}`, 'error');
-            showToast(`Error: ${result.error}`, 'error', 5000);
+            showToast(`Error: ${result.error}`, 'error', 6000);
             document.getElementById('loadDbBtn').disabled = false;
         }
     } catch (error) {
-        showStatus('❌ Error: Could not connect to Python backend. Make sure the server is running on port 5000.', 'error');
-        showToast('Could not connect to Python backend. Make sure the server is running on port 5000.', 'error', 5000);
+        showToast('Could not connect to Python backend. Make sure the server is running on port 5000.', 'error', 6000);
         document.getElementById('loadDbBtn').disabled = false;
     }
 }
 
 async function identifyTiger() {
     if (!uploadedImage || !databaseLoaded) {
-        showStatus('❌ Please upload an image and load the database first.', 'error');
-        showToast('Please upload an image and load the database first.', 'error', 3000);
+        showToast('Please upload an image and load the database first.', 'error', 6000);
         return;
     }
 
@@ -192,17 +191,17 @@ async function identifyTiger() {
         });
 
         const result = await response.json();
+        session_report.push(result);
         
-        // Hide loading modal
         hideLoadingModal();
         
         if (result.success) {
             displayResults(result.matches);
             showStatus('🎯 Tiger identification complete!', 'success');
-            showToast('Tiger identification complete!', 'success', 3000);
+            showToast('Tiger identification complete!', 'success', 6000);
         } else {
             showStatus(`❌ Error: ${result.error}`, 'error');
-            showToast(`Error: ${result.error}`, 'error', 5000);
+            showToast(`Error: ${result.error}`, 'error', 6000);
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = `
                 <div class="card uploaded-image-card">
@@ -226,7 +225,7 @@ async function identifyTiger() {
         console.error(error);
         hideLoadingModal();
         showStatus('❌ Error: Could not connect to Python backend for identification.', 'error');
-        showToast('Could not connect to Python backend for identification. Make sure the server is running on port 5000.', 'error', 5000);
+        showToast('Could not connect to Python backend for identification. Make sure the server is running on port 5000.', 'error', 6000);
         const resultsDiv = document.getElementById('results');
         resultsDiv.innerHTML = `
             <div class="card uploaded-image-card">
@@ -296,7 +295,7 @@ function displayResults(matches) {
             
             html += `
                 <div class="tiger-match">
-                    <img src="data:Image/jpeg;base64,${match.image}" alt="Matched tiger" class="match-image" onclick="showComparisonModal('${uploadedImage}', '${match.image_path}', ${match.stripe_similarity.toFixed(1)})">
+                    <img src="data:Image/jpeg;base64,${match.image}" alt="Matched tiger" class="match-image" onclick="showComparisonModal('${uploadedImage}', '${match.image}', ${match.stripe_similarity.toFixed(1)})">
                     <div class="tiger-info">
                         <div class="confidence" style="color: ${getFillColour(match.stripe_similarity/100)}">Similarity: ${match.stripe_similarity.toFixed(1)}%</div>
                         <div class="confidence-bar">
@@ -309,13 +308,14 @@ function displayResults(matches) {
                             Database Stripes: ${match.database_stripe_count}<br>
                             Tiger Name: ${match.tiger_name}
                         </div>
-                        <div class="match-badge">Database Match</div>
+                        <!-- <div class="match-badge">Database Match</div> -->
                     </div>
                 </div>
             `;
         });
         
         html += `
+                        <button class="btn report" onclick="createReport()">Create Session Report</button>
                     </div>
                 </div>
             </div>
@@ -329,7 +329,7 @@ function displayResults(matches) {
     resultsDiv.innerHTML = html;
 }
 
-function showComparisonModal(uploadedImg, matchedImg, similarity) {
+function showComparisonModal(uploadedImg, matchedImg, similarity, tigerName = 'Unknown Tiger') {
     const modal = document.createElement('div');
     modal.className = 'comparison-modal';
     modal.id = 'comparisonModal';
@@ -348,8 +348,8 @@ function showComparisonModal(uploadedImg, matchedImg, similarity) {
                 </div>
                 <div class="comparison-image-container matched">
                     <h3>📊 Database Match</h3>
-                    <img src="${matchedImg}" alt="Matched tiger">
-                    <div class="comparison-path">${matchedImg}</div>
+                    <img src="data:Image/jpeg;base64,${matchedImg}" alt="Matched tiger">
+                    <div class="comparison-path">Database Image: ${tigerName}</div>
                 </div>
             </div>
             <div class="comparison-actions">
@@ -386,12 +386,49 @@ document.addEventListener('DOMContentLoaded', () => {
     showStatus('Welcome to the Tiger Identification System. Load the database first, then upload a tiger image.', 'success');
 });
 
+function createReport() {
+    if (session_report.length === 0) {
+        showToast('No identification session data available to create a report.', 'error', 6000);
+        return;
+    }
+
+    let text = "SESSION REPORT\n\n";
+
+    session_report.forEach((result, index) => {
+        text += `Query ${index + 1}:\n`;
+        if (result.success) {
+            text += `Matches Found: ${result.matches.length}\n`;
+            result.matches.forEach((match, matchIndex) => {
+                text += `  Match ${matchIndex + 1}:\n`;
+                text += `    Tiger Name: ${match.tiger_name}\n`;
+                text += `    Similarity: ${match.stripe_similarity.toFixed(1)}%\n`;
+                text += `    Uploaded Stripes: ${match.uploaded_stripe_count}\n`;
+                text += `    Database Stripes: ${match.database_stripe_count}\n\n`;
+            });
+        } else {
+            text += `Error: ${result.error}\n\n`;
+        }
+        text += "\n\n";
+    });
+
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'session_report.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Session report created successfully!', 'success', 6000);
+}
+
 function getFillColour(percent, startRGB = { r: 255, g: 0, b: 0 }, endRGB = { r: 0, g: 255, b: 0 }) {
     percent = Math.max(0, Math.min(1, percent));
     
     const r = startRGB.r + (endRGB.r - startRGB.r) * percent;
     const g = startRGB.g + (endRGB.g - startRGB.g) * percent;
     const b = startRGB.b + (endRGB.b - startRGB.b) * percent;
-
+     
     return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
 }
