@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiger Identification System</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <img src="images/wii_logo.png" alt="Wildlife Institute of India" class="logo">
+            <div class="header-text">
+                <h1>Tiger Identification System</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+                    <div class="card upload-card">
+                <div class="card-header">
+                    <h3>🐅 Upload Tiger Image</h3>
+                </div>
+            <div class="card-content">
+                <div class="upload-section" id="uploadSection">
+                    <p>Drag and drop a tiger image here or click to browse</p>
+                    <input type="file" id="imageUpload" accept="image/*" />
+                    <br>
+                    <button class="btn btn-identify" onclick="identifyTiger()" id="identifyBtn" disabled>🔍 Identify Tiger</button>
+                    <button class="btn" onclick="loadDatabase()" id="loadDbBtn">📊 Load Tiger Database</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="status"></div>
+        <div id="results"></div>
+    </div>
+
+    <div class="toastbar" id="toastbar">
+        
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>
