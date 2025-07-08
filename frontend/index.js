@@ -197,10 +197,8 @@ async function identifyTiger() {
         
         if (result.success) {
             displayResults(result.matches);
-            showStatus('🎯 Tiger identification complete!', 'success');
             showToast('Tiger identification complete!', 'success', 6000);
         } else {
-            showStatus(`❌ Error: ${result.error}`, 'error');
             showToast(`Error: ${result.error}`, 'error', 6000);
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = `
@@ -224,7 +222,6 @@ async function identifyTiger() {
     } catch (error) {
         console.error(error);
         hideLoadingModal();
-        showStatus('❌ Error: Could not connect to Python backend for identification.', 'error');
         showToast('Could not connect to Python backend for identification. Make sure the server is running on port 5000.', 'error', 6000);
         const resultsDiv = document.getElementById('results');
         resultsDiv.innerHTML = `
@@ -297,8 +294,8 @@ function displayResults(matches) {
                 <div class="tiger-match">
                     <img src="data:Image/jpeg;base64,${match.image}" alt="Matched tiger" class="match-image" onclick="showComparisonModal('${uploadedImage}', '${match.image}', ${match.stripe_similarity.toFixed(1)})">
                     <div class="tiger-info">
-                        <div class="confidence" style="color: ${getFillColour(match.stripe_similarity/100)}">Similarity: ${match.stripe_similarity.toFixed(1)}%</div>
-                        <div class="confidence-bar">
+                        <div class="confidence" onclick="showComparisonModal('${uploadedImage}', '${match.image}', ${match.stripe_similarity.toFixed(1)})" style="color: ${getFillColour(match.stripe_similarity/100)}">Similarity: ${match.stripe_similarity.toFixed(1)}%</div>
+                        <div class="confidence-bar" onclick="showComparisonModal('${uploadedImage}', '${match.image}', ${match.stripe_similarity.toFixed(1)})">
                             <div class="confidence-fill" style="width: ${confidenceWidth}%">
                                 <div class="confidence-fill-inner" style="background: ${getFillColour(match.stripe_similarity/100)}"></div> 
                             </div>
@@ -353,21 +350,19 @@ function showComparisonModal(uploadedImg, matchedImg, similarity, tigerName = 'U
                 </div>
             </div>
             <div class="comparison-actions">
-                <button class="btn-close-modal" onclick="closeComparisonModal()">✕ Close Comparison</button>
+                <button class="btn btn-close-modal" onclick="closeComparisonModal()">✕ Close Comparison</button>
             </div>
         </div>
     `;
     
     document.body.appendChild(modal);
     
-    // Close modal when clicking on background
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             closeComparisonModal();
         }
     });
     
-    // Close modal with Escape key
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeComparisonModal();
@@ -377,9 +372,17 @@ function showComparisonModal(uploadedImg, matchedImg, similarity, tigerName = 'U
 
 function closeComparisonModal() {
     const modal = document.getElementById('comparisonModal');
+    const comparisonContent = document.getElementsByClassName('comparison-content')[0];
+
     if (modal) {
-        modal.remove();
+        modal.classList.add('lighten');
+        comparisonContent.classList.add('fadeout-fast');
+
+        setTimeout(() => {
+            modal.remove();
+        }, 200);
     }
+    
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -423,7 +426,7 @@ function createReport() {
     showToast('Session report created successfully!', 'success', 6000);
 }
 
-function getFillColour(percent, startRGB = { r: 255, g: 0, b: 0 }, endRGB = { r: 0, g: 255, b: 0 }) {
+function getFillColour(percent, startRGB = { r: 255, g: 165, b: 0 }, endRGB = { r: 0, g: 255, b: 0 }) {
     percent = Math.max(0, Math.min(1, percent));
     
     const r = startRGB.r + (endRGB.r - startRGB.r) * percent;
