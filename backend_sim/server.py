@@ -12,7 +12,7 @@ def load_database():
 
 @app.route('/identify_tiger', methods=['POST'])
 def identify_tiger():
-    #sleep(0.5) # Processing time
+    sleep(0.5) # Processing time
 
     return jsonify({
         'success': True,
@@ -20,13 +20,17 @@ def identify_tiger():
             'image_path': "C:/Users/arnav/OneDrive/Desktop/New folder/Tiger-Identification-Project/data/K 1 M/IMG_0073.JPG",
             'stripe_similarity': 85.0,
             'uploaded_stripe_count': 12,
-            'database_stripe_count': 15
+            'database_stripe_count': 15,
+            'image': base64.b64encode(open("C:/Users/arnav/OneDrive/Desktop/New folder/Tiger-Identification-Project/data/K 1 M/IMG_0073.JPG", "rb").read()).decode('utf-8'),
+            'tiger_name': 'K 1 M'
         },
         {
             'image_path': "C:/Users/arnav/OneDrive/Desktop/New folder/Tiger-Identification-Project/data/K 1 M/IMG_0160.JPG",
             'stripe_similarity': 75.0,
             'uploaded_stripe_count': 10,
-            'database_stripe_count': 14
+            'database_stripe_count': 14,
+            'image': base64.b64encode(open("C:/Users/arnav/OneDrive/Desktop/New folder/Tiger-Identification-Project/data/K 1 M/IMG_0160.JPG", "rb").read()).decode('utf-8'),
+            'tiger_name': 'K 1 M'
         }]
     })
 

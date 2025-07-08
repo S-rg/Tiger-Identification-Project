@@ -181,7 +181,7 @@ async function identifyTiger() {
     showLoadingModal();
 
     try {
-        const response = await fetch(`http://${hostname}:5000/identify_tiger`, {
+        const response = await fetch(`http://${host}:5000/identify_tiger`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -287,9 +287,8 @@ function displayResults(matches) {
             
             html += `
                 <div class="tiger-match">
-                    <img src="${match.image_path}" alt="Matched tiger" class="match-image" onclick="showComparisonModal('${uploadedImage}', '${match.image_path}', ${match.stripe_similarity.toFixed(1)})">
+                    <img src="data:Image/jpeg;base64,${match.image}" alt="Matched tiger" class="match-image" onclick="showComparisonModal('${uploadedImage}', '${match.image_path}', ${match.stripe_similarity.toFixed(1)})">
                     <div class="tiger-info">
-                        
                         <div class="confidence">Similarity: ${match.stripe_similarity.toFixed(1)}%</div>
                         <div class="confidence-bar">
                             <div class="confidence-fill" style="width: ${confidenceWidth}%"></div>
@@ -297,7 +296,7 @@ function displayResults(matches) {
                         <div class="match-details">
                             Uploaded Stripes: ${match.uploaded_stripe_count}<br>
                             Database Stripes: ${match.database_stripe_count}<br>
-                            Image: ${match.image_path}
+                            Tiger Name: ${match.tiger_name}
                         </div>
                         <div class="match-badge">Database Match</div>
                     </div>
