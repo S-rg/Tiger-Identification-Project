@@ -1,9 +1,9 @@
 let uploadedImage = null;
 let databaseLoaded = false;
-const API_BASE_URL = 'http://localhost:5000';
 
 const uploadSection = document.getElementById('uploadSection');
 const fileInput = document.getElementById('imageUpload');
+const host = window.location.hostname;
 
 uploadSection.addEventListener('dragover', (e) => {
     e.preventDefault();
@@ -98,7 +98,7 @@ function showToast(message, type, duration = 3000) {
         <p class="toast-text">${message}</p>
         `;
     
-    container.appendChild(toast);
+    container.insertBefore(toast, container.firstChild);
     
     setTimeout(() => {
         toast.classList.add('fadeout');
@@ -142,7 +142,7 @@ async function loadDatabase() {
     document.getElementById('loadDbBtn').disabled = true;
     
     try {
-        const response = await fetch('http://localhost:5000/load_database', {
+        const response = await fetch(`http://${host}:5000/load_database`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -173,6 +173,7 @@ async function loadDatabase() {
 async function identifyTiger() {
     if (!uploadedImage || !databaseLoaded) {
         showStatus('❌ Please upload an image and load the database first.', 'error');
+        showToast('Please upload an image and load the database first.', 'error', 3000);
         return;
     }
 
@@ -180,7 +181,7 @@ async function identifyTiger() {
     showLoadingModal();
 
     try {
-        const response = await fetch('http://localhost:5000/identify_tiger', {
+        const response = await fetch(`http://${hostname}:5000/identify_tiger`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -198,8 +199,10 @@ async function identifyTiger() {
         if (result.success) {
             displayResults(result.matches);
             showStatus('🎯 Tiger identification complete!', 'success');
+            showToast('Tiger identification complete!', 'success', 3000);
         } else {
             showStatus(`❌ Error: ${result.error}`, 'error');
+            showToast(`Error: ${result.error}`, 'error', 5000);
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = `
                 <div class="card uploaded-image-card">
@@ -223,6 +226,7 @@ async function identifyTiger() {
         console.error(error);
         hideLoadingModal();
         showStatus('❌ Error: Could not connect to Python backend for identification.', 'error');
+        showToast('Could not connect to Python backend for identification. Make sure the server is running on port 5000.', 'error', 5000);
         const resultsDiv = document.getElementById('results');
         resultsDiv.innerHTML = `
             <div class="card uploaded-image-card">

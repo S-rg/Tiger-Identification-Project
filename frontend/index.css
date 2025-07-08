@@ -63,7 +63,7 @@ body {
 
 .header-text p {
     color: #86868b;
-    font-size: 1.2em;
+    font-size: 2em;
     font-weight: 400;
 }
 
@@ -679,6 +679,10 @@ input[type="file"]:focus {
         text-align: center;
     }
 
+    .header-text {
+        font-size: 0.75em;
+    }
+
     .logo {
         margin-right: 0;
         margin-bottom: 15px;
@@ -697,6 +701,14 @@ input[type="file"]:focus {
     .container {
         padding: 0 16px;
     }
+
+    .card-header h3 {
+        font-size: 1.7em;
+    }
+
+    input[type="file"] {
+        max-width: 100%;
+    }
 }
 
 
@@ -710,26 +722,30 @@ input[type="file"]:focus {
     max-width: 90%;
 }
 
-.toast.success {
-    background-color: #d1fae5;
-    border-left: 4px solid #10b981;
-    color: #065f46;
+.toast {
     padding: 0.5rem;
     border-radius: 0.5rem;
     display: flex;
     align-items: center;
     opacity: 0.8;
+    transition: transform 0.3s ease;
+    animation: pop-in 0.3s;
+}
+
+.toast.success {
+    background-color: #d1fae5;
+    border-left: 4px solid #10b981;
+    color: #065f46;
 }
 
 .toast.error {
     background-color: #fee2e2;
     border-left: 4px solid #ef4444;
     color: #7f1d1d;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    display: flex;
-    align-items: center;
-    opacity: 0.8;
+}
+
+.toast:hover {
+    transform: scale(1.05);
 }
 
 .toast-icon.success {
