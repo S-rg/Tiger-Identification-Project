@@ -272,6 +272,15 @@ function displayResults(matches) {
                 </div>
             </div>
         `;
+    } else if (matches.length === 1) {
+        html += `
+            <div class="card matches-card">
+                <div class="card-header">
+                    <h3>🎯 We Found A Match!</h3>
+                </div>
+                <div class="card-content">
+                    <div class="matches-section">
+        `;
     } else {
         html += `
             <div class="card matches-card">
@@ -289,9 +298,11 @@ function displayResults(matches) {
                 <div class="tiger-match">
                     <img src="data:Image/jpeg;base64,${match.image}" alt="Matched tiger" class="match-image" onclick="showComparisonModal('${uploadedImage}', '${match.image_path}', ${match.stripe_similarity.toFixed(1)})">
                     <div class="tiger-info">
-                        <div class="confidence">Similarity: ${match.stripe_similarity.toFixed(1)}%</div>
+                        <div class="confidence" style="color: ${getFillColour(match.stripe_similarity/100)}">Similarity: ${match.stripe_similarity.toFixed(1)}%</div>
                         <div class="confidence-bar">
-                            <div class="confidence-fill" style="width: ${confidenceWidth}%"></div>
+                            <div class="confidence-fill" style="width: ${confidenceWidth}%">
+                                <div class="confidence-fill-inner" style="background: ${getFillColour(match.stripe_similarity/100)}"></div> 
+                            </div>
                         </div>
                         <div class="match-details">
                             Uploaded Stripes: ${match.uploaded_stripe_count}<br>
@@ -312,7 +323,7 @@ function displayResults(matches) {
     }
 
     window.requestAnimationFrame(() => {
-        document.getElementById('matchesCard').scrollIntoView({behavior: "smooth", block: "start" });
+        document.getElementsByClassName('confidence-bar')[0].scrollIntoView({behavior: "smooth", block: "start" });
     });
     
     resultsDiv.innerHTML = html;
@@ -374,3 +385,13 @@ function closeComparisonModal() {
 document.addEventListener('DOMContentLoaded', () => {
     showStatus('Welcome to the Tiger Identification System. Load the database first, then upload a tiger image.', 'success');
 });
+
+function getFillColour(percent, startRGB = { r: 255, g: 0, b: 0 }, endRGB = { r: 0, g: 255, b: 0 }) {
+    percent = Math.max(0, Math.min(1, percent));
+    
+    const r = startRGB.r + (endRGB.r - startRGB.r) * percent;
+    const g = startRGB.g + (endRGB.g - startRGB.g) * percent;
+    const b = startRGB.b + (endRGB.b - startRGB.b) * percent;
+
+    return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+}

@@ -26,7 +26,7 @@ def identify_tiger():
         },
         {
             'image_path': "C:/Users/arnav/OneDrive/Desktop/New folder/Tiger-Identification-Project/data/K 1 M/IMG_0160.JPG",
-            'stripe_similarity': 75.0,
+            'stripe_similarity': 55.0,
             'uploaded_stripe_count': 10,
             'database_stripe_count': 14,
             'image': base64.b64encode(open("C:/Users/arnav/OneDrive/Desktop/New folder/Tiger-Identification-Project/data/K 1 M/IMG_0160.JPG", "rb").read()).decode('utf-8'),
