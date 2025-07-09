@@ -720,18 +720,27 @@ input[type="file"]:focus {
 }
 
 @media (max-width: 768px) {
+    html, body {
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+
     .header-content {
-        flex-direction: column;
-        text-align: center;
+        flex-direction: row;
+        text-align: left;
+        align-items: center;
+        justify-content: flex-start;
     }
 
     .header-text {
-        font-size: 0.75em;
+        font-size: 0.6em;
+        text-align: left;
+        word-break: break-word;
     }
 
     .logo {
-        margin-right: 0;
-        margin-bottom: 15px;
+        margin-right: 24px;
+        margin-bottom: 0;
     }
 
     .tiger-match {
@@ -746,15 +755,39 @@ input[type="file"]:focus {
 
     .container {
         padding: 0 16px;
+        width: 100vw;
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
+
+    .card {
+        width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 
     .card-header h3 {
-        font-size: 1.7em;
+        font-size: 1.4em;
+        word-break: break-word;
     }
 
     input[type="file"] {
         max-width: 100%;
     }
+
+    .uploaded-image {
+        max-width: 80%;
+    }
+
+    .matches-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* .card-header {
+        text-align: center;
+    } */
 }
 
 

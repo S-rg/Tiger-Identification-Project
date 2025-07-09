@@ -385,9 +385,9 @@ function closeComparisonModal() {
     
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    showStatus('Welcome to the Tiger Identification System. Load the database first, then upload a tiger image.', 'success');
-});
+// document.addEventListener('DOMContentLoaded', () => {
+//     showStatus('Welcome to the Tiger Identification System. Load the database first, then upload a tiger image.', 'success');
+// });
 
 function createReport() {
     if (session_report.length === 0) {
