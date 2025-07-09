@@ -1,4 +1,5 @@
 let uploadedImage = null;
+let imageFile = null;
 let databaseLoaded = false;
 
 const uploadSection = document.getElementById('uploadSection');
@@ -40,6 +41,8 @@ function handleFileSelect(file) {
             updateIdentifyButton();
         };
         reader.readAsDataURL(file);
+
+        imageFile = file;
 
         showToast('Image uploaded successfully!', 'success');
     }
@@ -179,6 +182,8 @@ async function identifyTiger() {
     // Show loading modal
     showLoadingModal();
 
+    let compressedImage = await compressImage(imageFile);
+
     try {
         const response = await fetch(`http://${host}:5000/identify_tiger`, {
             method: 'POST',
@@ -186,7 +191,7 @@ async function identifyTiger() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                image_data: uploadedImage
+                image_data: compressedImage
             })
         });
 
@@ -434,4 +439,18 @@ function getFillColour(percent, startRGB = { r: 255, g: 165, b: 0 }, endRGB = { 
     const b = startRGB.b + (endRGB.b - startRGB.b) * percent;
      
     return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+}
+
+async function compressImage(image) {
+    const options = {
+        maxSizeMB: 2,
+        preserveExif: true,
+        alwaysKeepResolution: true,
+    }
+
+    imageCompression(image, options).then(compressedImage => {
+        console.log(`Original size: ${(image.size / 1024).toFixed(2)} KB`);
+        console.log(`Compressed size: ${(compressedImage.size / 1024).toFixed(2)} KB`);
+        return compressedImage;
+    });
 }
